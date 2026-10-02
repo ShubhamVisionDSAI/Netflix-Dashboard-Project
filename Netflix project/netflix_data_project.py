@@ -1,3 +1,5 @@
+import os
+
 import pandas as pd
 import matplotlib.pyplot as plt
 import streamlit as st
@@ -104,7 +106,17 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-netflix = pd.read_csv("Netflix_100_Customers_Dataset.csv")
+dataset_name = "Netflix_100_Customers_Dataset.csv"
+dataset_paths = (
+    dataset_name,
+    os.path.join("Netflix project", dataset_name),
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), dataset_name),
+)
+dataset_path = next((path for path in dataset_paths if os.path.exists(path)), None)
+if dataset_path is None:
+    raise FileNotFoundError(f"Could not find {dataset_name}")
+
+netflix = pd.read_csv(dataset_path)
 netflix["Watch_Date"] = pd.to_datetime(netflix["Watch_Date"])
 
 regions = sorted(netflix["Region"].dropna().unique().tolist())
